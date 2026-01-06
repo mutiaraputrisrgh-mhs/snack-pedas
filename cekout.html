@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | Snack Pedas</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-light">
+    <nav class="navbar">
+        <div class="logo">Snack<span>Pedas.</span></div>
+        <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Kembali</a>
+    </nav>
+
+    <main class="checkout-page">
+        <div class="checkout-box">
+            <h2>Keranjang Saya</h2>
+            <div id="cart-items-list"></div>
+            <div class="total-row">
+                <span>Total Bayar:</span>
+                <span id="final-price">Rp 0</span>
+            </div>
+
+            <div class="input-group">
+                <label>Nama Penerima</label>
+                <input type="text" id="wa-name" placeholder="Nama Anda">
+            </div>
+            <div class="input-group">
+                <label>Alamat Lengkap</label>
+                <textarea id="wa-address" rows="3" placeholder="Alamat pengiriman..."></textarea>
+            </div>
+
+            <button class="btn-wa" onclick="orderWhatsApp()"><i class="fab fa-whatsapp"></i> Checkout via WhatsApp</button>
+            <button class="btn-clear" onclick="clearCart()">Kosongkan Keranjang</button>
+        </div>
+    </main>
+
+    <script>
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const listDiv = document.getElementById('cart-items-list');
+        let total = 0;
+
+        cart.forEach(item => {
+            total += item.price;
+            listDiv.innerHTML += `<div class="item"><span><strong>${item.name}</strong><br><small>${item.level}</small></span><span>Rp ${item.price.toLocaleString()}</span></div>`;
+        });
+        document.getElementById('final-price').innerText = "Rp " + total.toLocaleString();
+
+        function orderWhatsApp() {
+            const name = document.getElementById('wa-name').value;
+            const addr = document.getElementById('wa-address').value;
+            if(!name || !addr) return alert("Mohon isi nama dan alamat!");
+
+            let msg = `Halo Snack Pedas Kekinian!\n\n*Pesanan Saya:*\n`;
+            cart.forEach((item, i) => msg += `${i+1}. ${item.name} (${item.level}) - Rp${item.price.toLocaleString()}\n`);
+            msg += `\n*Total Keseluruhan: Rp${total.toLocaleString()}*\n\n*Data Pengiriman:*\nNama: ${name}\nAlamat: ${addr}`;
+            
+            const phone = "6283190075606"; 
+            window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        function clearCart() { localStorage.removeItem('cart'); location.reload(); }
+    </script>
+</body>
+</html>
